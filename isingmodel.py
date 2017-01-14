@@ -17,7 +17,8 @@ def hamiltonian_energy(lattice,lattice_size , x, y): # buggy function
     right = 0
     top = 0
     bottom = 0
-    if(x < lattice_size):
+    print x, y
+    if(x < lattice_size - 1):
         right = lattice[x+1][y]
     else:
         right = 0
@@ -27,7 +28,7 @@ def hamiltonian_energy(lattice,lattice_size , x, y): # buggy function
     else:
         left = 0
         
-    if(y < lattice_size):
+    if(y < lattice_size - 1):
         bottom = lattice[x][y+1]
     else:
         bottom = 0
@@ -45,6 +46,7 @@ def monte_carlo():
     T = 5
     lattice = init_lattice(lattice_size, lattice_size)
     for s in range(monte_iteration):
+        print s # debug print
         for i in range(lattice_size):
             for j in range(lattice_size):
                 energy = hamiltonian_energy(lattice, lattice_size, i, j)

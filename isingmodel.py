@@ -1,8 +1,6 @@
 import numpy as np
 import random
 
-kb = 1.36 * 10**-23
-
 def init_lattice(rows,columns):
     lattice = np.zeros((rows,columns))
     for i in range(rows):
@@ -10,51 +8,84 @@ def init_lattice(rows,columns):
                 lattice[i][j] = random.choice((-1,1))
     return lattice
     
-#print init_lattice(4,4) test code
-
-def hamiltonian_energy(lattice,lattice_size , x, y): # buggy function
+def hamiltonian_energy(lattice,lattice_size , x, y): 
     left = 0
     right = 0
     top = 0
     bottom = 0
-    print x, y
     if(x < lattice_size - 1):
         right = lattice[x+1][y]
     else:
-        right = 0
+        right = lattice[0][y]
         
     if(x > 0):
         left = lattice[x-1][y]
     else:
-        left = 0
+        left = lattice[lattice_size-1][y]
         
     if(y < lattice_size - 1):
         bottom = lattice[x][y+1]
     else:
-        bottom = 0
+        bottom = lattice[x][0]
         
     if(y > 0):
         top = lattice[x][y-1]
     else:
-        top = 0
+        top = lattice[x][lattice_size - 1]
     
-    return -2 * lattice[x][y] * (left + right + top + bottom)
+    return -1 * lattice[x][y] * (left + right + top + bottom)
+    
+def spin_flip(lattice, lattice_size, i, j, T):
+    energy = hamiltonian_energy(lattice, lattice_size, i, j)
+    flip_energy = -energy
+    energy_diff = flip_energy - energy
+    if energy_diff < 0 or np.exp(-(energy_diff)/(T)) > random.random() :
+        lattice[i][j] *= -1
+        energy = flip_energy
+    return lattice, energy 
+
     
 def monte_carlo():
-    lattice_size = 4
-    monte_iteration = 5
-    T = 5
+    
+    lattice_size = 10
+    T = 0.01
+    Tlist = []
+    Tmax = 5
+    Tstep = 0.01
     lattice = init_lattice(lattice_size, lattice_size)
-    for s in range(monte_iteration):
-        print s # debug print
-        for i in range(lattice_size):
-            for j in range(lattice_size):
-                energy = hamiltonian_energy(lattice, lattice_size, i, j)
-                if energy < 0 :
-                    lattice[i][j] *= -1
-                elif np.exp((-1/(kb*T))*energy) > random.random():
-                    lattice[i][j] *= -1
-                else:
-                    continue
+    lattice_energies = []
+    lattice_mag = []
+    
+    while T < Tmax:
+        i = 0
+        
+        while i < (lattice_size**2) * 3:
+            x = random.randint(0,lattice_size-1)
+            y = random.randint(0,lattice_size-1)
+            latt_E = spin_flip(lattice, lattice_size, x, y, T)
+            lattice = latt_E[0]
+            i += 1
             
+        i = 0
+        energy = 0
+        mag = 0
+        
+        while i < (lattice_size** 2) * 1:
+            x = random.randint(0,lattice_size-1)
+            y = random.randint(0,lattice_size-1)
+            temp_energy = hamiltonian_energy(lattice,lattice_size, x, y)
+            energy += temp_energy
+            mag += lattice[x][y]
+            i += 1
+            
+        energy = energy / ((lattice_size ** 2) * 1)
+        mag = mag / (((lattice_size ** 2) * 1) ** 2)
+        lattice_energies.append(energy)
+        lattice_mag.append(mag)
+        Tlist.append(T)
+        T += Tstep
+        
+
+
+    
 monte_carlo()

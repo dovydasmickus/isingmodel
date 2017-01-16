@@ -48,18 +48,18 @@ def spin_flip(lattice, lattice_size, i, j, T):
     
 def monte_carlo():
     
-    lattice_size = 30
+    lattice_size = 50
     samples = 1
     T = 0.01
     Tlist = []
     Tmax = 5
     Tstep = 0.01
     lattice = init_lattice(lattice_size, lattice_size)
-    print lattice
     lattice_energies = []
     lattice_energy_var = []
     lattice_mag = []
     lattice_mag_var = []
+    hitcrittemp = True
     
     while T < Tmax:
         i = 0
@@ -81,6 +81,7 @@ def monte_carlo():
             x = random.randint(0,lattice_size-1)
             y = random.randint(0,lattice_size-1)
             temp_energy = hamiltonian_energy(lattice,lattice_size, x, y)
+            
             energy_arr.append(temp_energy)
             mag_arr.append(lattice[x][y])
             energy += temp_energy
@@ -89,6 +90,9 @@ def monte_carlo():
             
         energy = energy / ((lattice_size ** 2) * samples)
         mag = mag / (((lattice_size ** 2) * samples))
+        if(mag <= 0 and hitcrittemp):
+            print "Critical Temperature = ", T
+            hitcripttemp = False
         lattice_energies.append(energy)
         lattice_energy_var.append(variance(energy_arr))
         lattice_mag.append(mag)
@@ -108,25 +112,25 @@ def monte_carlo():
     plt.figure(1)
     plt.xlabel("Temperature(Kelvin)")
     plt.ylabel("Average Lattice Energies")
-    plt.title("Average Lattice Energy vs Temperature(30x30 lattice)")
+    plt.title("Average Lattice Energy vs Temperature(50x50 lattice)")
     plt.plot(Tlist, lattice_energies, 'b--')
     
     plt.figure(2)
     plt.xlabel("Temperature(Kelvin)")
     plt.ylabel("Average Magnestism")
-    plt.title("Average Lattice Magnetism vs Temperature(30x30 lattice)")
+    plt.title("Average Lattice Magnetism vs Temperature(50x50 lattice)")
     plt.plot(Tlist, lattice_mag, 'b--')
         
     plt.figure(3)
     plt.plot(Tlist,specificHeat, 'b--')
     plt.xlabel("Temperature(Kelvin)")
-    plt.title("Specific Heat vs Temperature(30x30 lattice)")
+    plt.title("Specific Heat vs Temperature(50x50 lattice)")
     plt.ylabel("Specific Heat Capacity")
     
     plt.figure(4)
     plt.plot(Tlist, magneticSuscep, 'b--')
     plt.xlabel("Temperature(Kelvin)")
-    plt.title("Magnetic Susceptability vs Temperature(30x30 lattice)")
+    plt.title("Magnetic Susceptability vs Temperature(50x50 lattice)")
     plt.ylabel("Magnetic Susceptability")
     plt.show()
         

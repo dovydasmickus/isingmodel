@@ -48,8 +48,8 @@ def spin_flip(lattice, lattice_size, i, j, T):
     
 def monte_carlo():
     
-    lattice_size = 50
-    samples = 1
+    lattice_size = 10
+    samples = 20
     T = 0.01
     Tlist = []
     Tmax = 5
@@ -64,7 +64,7 @@ def monte_carlo():
     while T < Tmax:
         i = 0
         
-        while i < (lattice_size**2) * 5:
+        while i < (lattice_size**2) * 50:
             x = random.randint(0,lattice_size-1)
             y = random.randint(0,lattice_size-1)
             latt_E = spin_flip(lattice, lattice_size, x, y, T)
@@ -92,7 +92,7 @@ def monte_carlo():
         mag = mag / (((lattice_size ** 2) * samples))
         if(mag <= 0 and hitcrittemp):
             print "Critical Temperature = ", T
-            hitcripttemp = False
+            hitcrittemp = False
         lattice_energies.append(energy)
         lattice_energy_var.append(variance(energy_arr))
         lattice_mag.append(mag)
@@ -112,25 +112,25 @@ def monte_carlo():
     plt.figure(1)
     plt.xlabel("Temperature(Kelvin)")
     plt.ylabel("Average Lattice Energies")
-    plt.title("Average Lattice Energy vs Temperature(50x50 lattice)")
+    plt.title("Average Lattice Energy vs Temperature(10x10 lattice)")
     plt.plot(Tlist, lattice_energies, 'b--')
     
     plt.figure(2)
     plt.xlabel("Temperature(Kelvin)")
     plt.ylabel("Average Magnestism")
-    plt.title("Average Lattice Magnetism vs Temperature(50x50 lattice)")
+    plt.title("Average Lattice Magnetism vs Temperature(10x10 lattice)")
     plt.plot(Tlist, lattice_mag, 'b--')
         
     plt.figure(3)
     plt.plot(Tlist,specificHeat, 'b--')
     plt.xlabel("Temperature(Kelvin)")
-    plt.title("Specific Heat vs Temperature(50x50 lattice)")
+    plt.title("Specific Heat vs Temperature(10x10 lattice)")
     plt.ylabel("Specific Heat Capacity")
     
     plt.figure(4)
     plt.plot(Tlist, magneticSuscep, 'b--')
     plt.xlabel("Temperature(Kelvin)")
-    plt.title("Magnetic Susceptability vs Temperature(50x50 lattice)")
+    plt.title("Magnetic Susceptability vs Temperature(10x10 lattice)")
     plt.ylabel("Magnetic Susceptability")
     plt.show()
         

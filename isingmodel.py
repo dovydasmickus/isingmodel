@@ -88,14 +88,13 @@ def monte_carlo():
             i += 1
             
         energy = energy / ((lattice_size ** 2) * samples)
-        mag = mag / (((lattice_size ** 2) * samples) ** 2)
+        mag = mag / (((lattice_size ** 2) * samples))
         lattice_energies.append(energy)
         lattice_energy_var.append(variance(energy_arr))
         lattice_mag.append(mag)
         lattice_mag_var.append(variance(mag_arr))
         Tlist.append(T)
         T += Tstep
-        #print "energy values = ", energy
     
     specificHeat = []    
     for i in range(len(lattice_energy_var)):

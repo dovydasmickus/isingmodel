@@ -2,14 +2,19 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
-def init_lattice(rows,columns):
+#ALL OF THE LATTICES ARE ASSUMED TO BE SQUARE IN THIS CODE. The code can be easily modified for other arrangements however
+
+
+def init_lattice(rows,columns): # generates a lattice filled with +1 spins.
     lattice = np.zeros((rows,columns))
     for i in range(rows):
         for j in range(columns):
                 lattice[i][j] = 1  #value doesn't matter as the monte carlo sampling will achieve equilibrium regardless. Not calling np.choice saves computation time.
     return lattice
-    
-def hamiltonian_energy(lattice,lattice_size , x, y): 
+
+#hamiltonian_energy(lattice in question, size of one of the dimensions, x position of site, y position of site)
+#returns energy of the site.
+def hamiltonian_energy(lattice,lattice_size , x, y):
     left = 0
     right = 0
     top = 0
@@ -36,7 +41,9 @@ def hamiltonian_energy(lattice,lattice_size , x, y):
     
     return -1 * lattice[x][y] * (left + right + top + bottom)
     
-def spin_flip(lattice, lattice_size, i, j, T):
+#spin_flip(lattice, size of the lattice in 1 direction, x position of site, y position of site)
+#returns an updated lattice and the energy of the site.
+def spin_flip(lattice, lattice_size, i, j, T): 
     energy = hamiltonian_energy(lattice, lattice_size, i, j)
     flip_energy = -energy
     energy_diff = flip_energy - energy
@@ -47,12 +54,12 @@ def spin_flip(lattice, lattice_size, i, j, T):
 
     
 def monte_carlo():
-    
-    lattice_size = 10
-    samples = 20
-    T = 0.01
-    Tlist = []
-    Tmax = 5
+    #initialises all of the variables
+    lattice_size = 10 #lattice dimension
+    samples = 20 #multiplier for the number of times the data is sampled from an equiliblirated lattice
+    T = 0.01 # initial temperature
+    Tlist = [] #temperature list
+    Tmax = 5 #max temperature
     Tstep = 0.01
     lattice = init_lattice(lattice_size, lattice_size)
     lattice_energies = []
@@ -63,20 +70,20 @@ def monte_carlo():
     
     while T < Tmax:
         i = 0
-        
+        #equilibrium loop start
         while i < (lattice_size**2) * 50:
             x = random.randint(0,lattice_size-1)
             y = random.randint(0,lattice_size-1)
             latt_E = spin_flip(lattice, lattice_size, x, y, T)
             lattice = latt_E[0]
             i += 1
-            
+        #equilibrium loop end
         i = 0
         energy = 0
         mag = 0
         energy_arr = []
         mag_arr = []
-        
+        #data analysing loop start
         while i < (lattice_size** 2) * samples:
             x = random.randint(0,lattice_size-1)
             y = random.randint(0,lattice_size-1)
@@ -87,10 +94,10 @@ def monte_carlo():
             energy += temp_energy
             mag += lattice[x][y]
             i += 1
-            
+        #data analysing loop start 
         energy = energy / ((lattice_size ** 2) * samples)
         mag = mag / (((lattice_size ** 2) * samples))
-        if(mag <= 0 and hitcrittemp):
+        if(mag <= 0 and hitcrittemp): #gets the critical temperature
             print "Critical Temperature = ", T
             hitcrittemp = False
         lattice_energies.append(energy)
@@ -99,7 +106,7 @@ def monte_carlo():
         lattice_mag_var.append(variance(mag_arr))
         Tlist.append(T)
         T += Tstep
-    
+    #specific heat and magnetic susceptibility loops start
     specificHeat = []    
     for i in range(len(lattice_energy_var)):
         specificHeat.append(lattice_energy_var[i] / (Tlist[i] ** 2))
@@ -108,7 +115,9 @@ def monte_carlo():
     
     for i in range(len(lattice_mag_var)):
         magneticSuscep.append(lattice_mag_var[i] / Tlist[i])
+    #specific heat and magnetic susceptibility loops start end
     
+    #graphs
     plt.figure(1)
     plt.xlabel("Temperature(Kelvin)")
     plt.ylabel("Average Lattice Energies")
